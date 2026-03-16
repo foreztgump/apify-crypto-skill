@@ -1,4 +1,5 @@
 import pytest
+
 from crypto_skill.models import (
     CoinDetail,
     CryptoCategory,
@@ -39,7 +40,7 @@ class TestOHLCVCandle:
         assert not hasattr(candle, "extra_field")
 
     def test_missing_required_field_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             OHLCVCandle(
                 timestamp=1710000000.0,
                 open=65000.0,
