@@ -55,7 +55,7 @@ def _parse_candles(items: list[dict]) -> list[OHLCVCandle]:
     """Validate and convert raw candle dicts to OHLCVCandle models."""
     try:
         return [
-            OHLCVCandle(**{**item, "timestamp": item.get("timestamp", 0) / MS_TO_SECONDS})
+            OHLCVCandle(**{**item, "timestamp": item["timestamp"] / MS_TO_SECONDS})
             for item in items
         ]
     except (ValidationError, TypeError, KeyError) as exc:

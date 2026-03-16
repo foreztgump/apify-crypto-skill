@@ -126,3 +126,11 @@ class TestGetAllCoinsOhlcv:
         await get_all_coins_ohlcv("1h")
         call_input = mock_run.call_args[0][1]
         assert call_input["data_limit"] == DEFAULT_DATA_LIMIT
+
+    @patch(MODULE_PATH, new_callable=AsyncMock)
+    async def test_invalid_data_raises_actor_data_error(self, mock_run):
+        mock_run.return_value = [{"bad": "data"}]
+        from crypto_skill.kucoin import get_all_coins_ohlcv
+
+        with pytest.raises(ActorDataError):
+            await get_all_coins_ohlcv("1h")
