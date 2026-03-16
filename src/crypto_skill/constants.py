@@ -1,0 +1,9 @@
+APIFY_BASE_URL = "https://api.apify.com/v2"
+KUCOIN_ACTOR_ID = "moving_beacon-owner1~my-actor-14"
+COINGECKO_ACTOR_ID = "benthepythondev~crypto-intelligence"
+DEFAULT_TIMEOUT = 300  # seconds, matches Apify sync endpoint limit
+DEFAULT_DATA_LIMIT = 100
+DEFAULT_VS_CURRENCY = "usd"
+DEFAULT_SORT_ORDER = "market_cap_desc"
+REALTIME_TIMEFRAME = "1m"
+REALTIME_DATA_LIMIT = 1
