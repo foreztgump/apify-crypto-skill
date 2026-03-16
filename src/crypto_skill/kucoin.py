@@ -12,8 +12,6 @@ from crypto_skill.constants import (
 from crypto_skill.exceptions import ActorDataError
 from crypto_skill.models import OHLCVCandle, RealtimePrice
 
-MS_TO_SECONDS = 1000.0
-
 
 async def get_ohlcv(
     symbol: str, timeframe: str, limit: int = DEFAULT_DATA_LIMIT
@@ -21,7 +19,7 @@ async def get_ohlcv(
     """Fetch OHLCV candlestick data from KuCoin."""
     actor_input = {"symbol": symbol, "timeframe": timeframe, "data_limit": limit}
     items = await run_actor_sync(KUCOIN_ACTOR_ID, actor_input)
-    return _parse_candles(items)
+    return _parse_candles(items, symbol)
 
 
 async def get_realtime_price(symbol: str) -> RealtimePrice:
@@ -36,26 +34,41 @@ async def get_realtime_price(symbol: str) -> RealtimePrice:
     if not items:
         raise ActorDataError(f"No data returned for {symbol}")
 
+    raw = items[0]
     try:
-        candle = OHLCVCandle(**{**items[0], "timestamp": items[0]["timestamp"] / MS_TO_SECONDS})
+        return RealtimePrice(
+            symbol=symbol,
+            price=raw["Close"],
+            date=raw["Date"],
+        )
     except (ValidationError, TypeError, KeyError) as exc:
         raise ActorDataError(f"Failed to parse realtime price: {exc}") from exc
-
-    return RealtimePrice(symbol=symbol, price=candle.close, timestamp=candle.timestamp)
 
 
 async def get_all_coins_ohlcv(timeframe: str, limit: int = DEFAULT_DATA_LIMIT) -> list[OHLCVCandle]:
     """Fetch OHLCV data for all available coins on KuCoin."""
     actor_input = {"symbol": "", "timeframe": timeframe, "data_limit": limit}
     items = await run_actor_sync(KUCOIN_ACTOR_ID, actor_input)
-    return _parse_candles(items)
+    return _parse_candles(items, "")
 
 
-def _parse_candles(items: list[dict]) -> list[OHLCVCandle]:
-    """Validate and convert raw candle dicts to OHLCVCandle models."""
+def _parse_candles(items: list[dict], symbol: str) -> list[OHLCVCandle]:
+    """Validate and convert raw candle dicts to OHLCVCandle models.
+
+    The actor returns capitalized keys (Date, Open, High, Low, Close, Volume)
+    and no symbol field. We map to lowercase and inject the symbol.
+    """
     try:
         return [
-            OHLCVCandle(**{**item, "timestamp": item["timestamp"] / MS_TO_SECONDS})
+            OHLCVCandle(
+                date=item["Date"],
+                open=item["Open"],
+                high=item["High"],
+                low=item["Low"],
+                close=item["Close"],
+                volume=item["Volume"],
+                symbol=symbol,
+            )
             for item in items
         ]
     except (ValidationError, TypeError, KeyError) as exc:

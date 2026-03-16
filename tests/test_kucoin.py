@@ -11,15 +11,16 @@ MODULE_PATH = "crypto_skill.kucoin.run_actor_sync"
 
 class TestGetOhlcv:
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_returns_candles_with_converted_timestamps(self, mock_run, sample_ohlcv_response):
+    async def test_returns_candles_with_mapped_fields(self, mock_run, sample_ohlcv_response):
         mock_run.return_value = sample_ohlcv_response
         from crypto_skill.kucoin import get_ohlcv
 
         result = await get_ohlcv("BTC/USDT", "15m")
         assert len(result) == 2
         assert isinstance(result[0], OHLCVCandle)
-        assert result[0].timestamp == 1710000000.0
+        assert result[0].date == "2026-03-16 23:15:00"
         assert result[0].close == 65500.0
+        assert result[0].symbol == "BTC/USDT"
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
     async def test_builds_correct_actor_input(self, mock_run):
@@ -59,7 +60,7 @@ class TestGetRealtimePrice:
         assert isinstance(result, RealtimePrice)
         assert result.price == 65500.0
         assert result.symbol == "BTC/USDT"
-        assert result.timestamp == 1710000000.0
+        assert result.date == "2026-03-16 23:15:00"
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
     async def test_empty_response_raises_data_error(self, mock_run):
@@ -73,13 +74,12 @@ class TestGetRealtimePrice:
     async def test_sends_data_limit_1(self, mock_run):
         mock_run.return_value = [
             {
-                "timestamp": 1710000000000,
-                "open": 65000.0,
-                "high": 66000.0,
-                "low": 64000.0,
-                "close": 65500.0,
-                "volume": 100.0,
-                "symbol": "BTC/USDT",
+                "Date": "2026-03-16 23:15:00",
+                "Open": 65000.0,
+                "High": 66000.0,
+                "Low": 64000.0,
+                "Close": 65500.0,
+                "Volume": 100.0,
             }
         ]
         from crypto_skill.kucoin import get_realtime_price
@@ -88,8 +88,6 @@ class TestGetRealtimePrice:
         call_input = mock_run.call_args[0][1]
         assert call_input["data_limit"] == 1
 
-
-class TestGetRealtimePriceErrors:
     @patch(MODULE_PATH, new_callable=AsyncMock)
     async def test_invalid_candle_data_raises_data_error(self, mock_run):
         mock_run.return_value = [{"bad": "data"}]

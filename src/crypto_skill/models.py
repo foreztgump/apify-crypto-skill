@@ -1,22 +1,27 @@
 from __future__ import annotations
 
-from typing import Any
-
 from pydantic import BaseModel, ConfigDict
 
 # --- KuCoin Models ---
 
 
 class OHLCVCandle(BaseModel):
+    """OHLCV candlestick data from KuCoin.
+
+    Actor returns capitalized keys (Date, Open, High, Low, Close, Volume).
+    The date field is a string like "2026-03-16 23:15:00".
+    Symbol is injected from the request input since the actor doesn't return it.
+    """
+
     model_config = ConfigDict(extra="ignore")
 
-    timestamp: float
+    date: str
     open: float
     high: float
     low: float
     close: float
     volume: float
-    symbol: str
+    symbol: str = ""
 
 
 class RealtimePrice(BaseModel):
@@ -24,17 +29,12 @@ class RealtimePrice(BaseModel):
 
     symbol: str
     price: float
-    timestamp: float
+    date: str
 
 
 # --- CoinGecko Models ---
-
-
-class SimplePrice(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    coin_id: str
-    prices: dict[str, float]
+# The CoinGecko actor returns the same market-data format for all scrape modes.
+# MarketCoin is the universal output model.
 
 
 class MarketCoin(BaseModel):
@@ -57,49 +57,3 @@ class MarketCoin(BaseModel):
     ath: float | None = None
     atl: float | None = None
     last_updated: str | None = None
-
-
-class CoinDetail(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    id: str
-    symbol: str
-    name: str
-    description: str
-    categories: list[str]
-    links: dict[str, Any] = {}
-    genesis_date: str | None = None
-    sentiment_votes_up: float | None = None
-    sentiment_votes_down: float | None = None
-    community_data: dict[str, Any] | None = None
-    developer_data: dict[str, Any] | None = None
-
-
-class HistoricalData(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    coin_id: str
-    price_data: list[tuple[float, float]]
-    price_start: float
-    price_end: float
-    price_change: float
-    price_change_percentage: float
-    price_high: float
-    price_low: float
-
-
-class TrendingCoin(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    id: str
-    symbol: str
-    name: str
-    market_cap_rank: int | None = None
-
-
-class CryptoCategory(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    id: str
-    name: str
-    market_cap: float | None = None

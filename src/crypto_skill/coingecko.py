@@ -10,24 +10,21 @@ from crypto_skill.constants import (
     DEFAULT_VS_CURRENCY,
 )
 from crypto_skill.exceptions import ActorDataError
-from crypto_skill.models import (
-    CoinDetail,
-    CryptoCategory,
-    HistoricalData,
-    MarketCoin,
-    SimplePrice,
-    TrendingCoin,
-)
+from crypto_skill.models import MarketCoin
 
 
 async def get_simple_prices(
     coin_ids: list[str], vs_currencies: list[str] | None = None
-) -> list[SimplePrice]:
-    """Fetch simple price data for multiple coins from CoinGecko."""
+) -> list[MarketCoin]:
+    """Fetch price data for specific coins from CoinGecko."""
     currencies = vs_currencies if vs_currencies is not None else [DEFAULT_VS_CURRENCY]
-    actor_input = {"scrapeMode": "simple_prices", "coinIds": coin_ids, "vsCurrencies": currencies}
+    actor_input = {
+        "scrapeMode": "simple_prices",
+        "coinIds": coin_ids,
+        "vsCurrencies": currencies,
+    }
     items = await run_actor_sync(COINGECKO_ACTOR_ID, actor_input)
-    return _parse_list(items, SimplePrice)
+    return _parse_market_coins(items)
 
 
 async def get_market_data(
@@ -45,24 +42,24 @@ async def get_market_data(
     if category is not None:
         actor_input["category"] = category
     items = await run_actor_sync(COINGECKO_ACTOR_ID, actor_input)
-    return _parse_list(items, MarketCoin)
+    return _parse_market_coins(items)
 
 
-async def get_coin_detail(coin_id: str, include_details: bool = True) -> CoinDetail:
-    """Fetch detailed information for a specific coin from CoinGecko."""
+async def get_coin_detail(coin_id: str, include_details: bool = True) -> MarketCoin:
+    """Fetch detailed data for a specific coin from CoinGecko."""
     actor_input = {
         "scrapeMode": "coin_detail",
         "coinIds": [coin_id],
         "includeDetails": include_details,
     }
     items = await run_actor_sync(COINGECKO_ACTOR_ID, actor_input)
-    return _extract_single(items, CoinDetail, coin_id)
+    return _extract_single(items, coin_id)
 
 
 async def get_historical(
     coin_id: str, days: int = 30, vs_currency: str = DEFAULT_VS_CURRENCY
-) -> HistoricalData:
-    """Fetch historical price data for a coin from CoinGecko."""
+) -> MarketCoin:
+    """Fetch data for a coin from CoinGecko (historical mode)."""
     actor_input = {
         "scrapeMode": "historical_data",
         "coinIds": [coin_id],
@@ -70,34 +67,34 @@ async def get_historical(
         "vsCurrency": vs_currency,
     }
     items = await run_actor_sync(COINGECKO_ACTOR_ID, actor_input)
-    return _extract_single(items, HistoricalData, coin_id)
+    return _extract_single(items, coin_id)
 
 
-async def get_trending() -> list[TrendingCoin]:
+async def get_trending() -> list[MarketCoin]:
     """Fetch currently trending cryptocurrencies from CoinGecko."""
     items = await run_actor_sync(COINGECKO_ACTOR_ID, {"scrapeMode": "trending"})
-    return _parse_list(items, TrendingCoin)
+    return _parse_market_coins(items)
 
 
-async def get_categories() -> list[CryptoCategory]:
-    """Fetch cryptocurrency categories from CoinGecko."""
+async def get_categories() -> list[MarketCoin]:
+    """Fetch cryptocurrency data by categories from CoinGecko."""
     items = await run_actor_sync(COINGECKO_ACTOR_ID, {"scrapeMode": "categories"})
-    return _parse_list(items, CryptoCategory)
+    return _parse_market_coins(items)
 
 
-def _parse_list[T](items: list[dict], model_class: type[T]) -> list[T]:
-    """Validate a list of dicts against a Pydantic model."""
+def _parse_market_coins(items: list[dict]) -> list[MarketCoin]:
+    """Validate a list of dicts as MarketCoin models."""
     try:
-        return [model_class(**item) for item in items]
+        return [MarketCoin(**item) for item in items]
     except (ValidationError, TypeError) as exc:
-        raise ActorDataError(f"Failed to parse {model_class.__name__}: {exc}") from exc
+        raise ActorDataError(f"Failed to parse MarketCoin: {exc}") from exc
 
 
-def _extract_single[T](items: list[dict], model_class: type[T], identifier: str) -> T:
-    """Extract and validate a single item from the dataset result."""
+def _extract_single(items: list[dict], identifier: str) -> MarketCoin:
+    """Extract and validate a single MarketCoin from the dataset result."""
     if not items:
         raise ActorDataError(f"No data returned for {identifier}")
     try:
-        return model_class(**items[0])
+        return MarketCoin(**items[0])
     except (ValidationError, TypeError) as exc:
-        raise ActorDataError(f"Failed to parse {model_class.__name__}: {exc}") from exc
+        raise ActorDataError(f"Failed to parse MarketCoin: {exc}") from exc
