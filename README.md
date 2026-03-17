@@ -13,7 +13,7 @@ pip install -e .
 Set your Apify API token as an environment variable:
 
 ```bash
-export APIFY_TOKEN=your_apify_token_here
+export APIFY_API_TOKEN=your_apify_token_here
 ```
 
 ## Usage
@@ -82,7 +82,7 @@ All exceptions inherit from `CryptoSkillError`:
 
 | Exception | When |
 |-----------|------|
-| `ApifyAuthError` | Missing or invalid `APIFY_TOKEN` |
+| `ApifyAuthError` | Missing or invalid `APIFY_API_TOKEN` |
 | `ApifyActorError` | Actor run failed, rate limited, or connection error |
 | `ApifyTimeoutError` | Actor run exceeded 300s timeout |
 | `ActorDataError` | Response doesn't match expected schema |

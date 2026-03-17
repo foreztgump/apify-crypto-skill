@@ -13,7 +13,7 @@ strategic programming. See CODE_PRINCIPLES.md for full details.
 - Apify sync run endpoint has a 300-second timeout — for long-running actor calls, use async run + polling instead.
 - All monetary/price values from actors are floats — do NOT convert to integers.
 - OHLCV timestamps from KuCoin are Unix milliseconds — convert to seconds when exposing to consumers.
-- `APIFY_TOKEN` must come from environment variable — never accept tokens as function parameters or hardcode them.
+- `APIFY_API_TOKEN` must come from environment variable — never accept tokens as function parameters or hardcode them.
 - When stuck or confused for more than 2 attempts at the same problem, say so explicitly.
 - Always request local code review (`superpowers:code-reviewer`) before committing.
 

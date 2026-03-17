@@ -3,8 +3,8 @@ import pytest
 
 @pytest.fixture()
 def apify_token_env(monkeypatch):
-    """Set APIFY_TOKEN env var for tests."""
-    monkeypatch.setenv("APIFY_TOKEN", "test-token-abc123")
+    """Set APIFY_API_TOKEN env var for tests."""
+    monkeypatch.setenv("APIFY_API_TOKEN", "test-token-abc123")
 
 
 @pytest.fixture()

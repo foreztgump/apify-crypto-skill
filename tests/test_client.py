@@ -41,8 +41,8 @@ class TestRunActorSyncSuccess:
 
 class TestRunActorSyncAuthErrors:
     async def test_missing_token_raises_auth_error(self, monkeypatch):
-        monkeypatch.delenv("APIFY_TOKEN", raising=False)
-        with pytest.raises(ApifyAuthError, match="APIFY_TOKEN"):
+        monkeypatch.delenv("APIFY_API_TOKEN", raising=False)
+        with pytest.raises(ApifyAuthError, match="APIFY_API_TOKEN"):
             await run_actor_sync(ACTOR_ID, {})
 
     @respx.mock

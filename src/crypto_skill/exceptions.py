@@ -3,7 +3,7 @@ class CryptoSkillError(Exception):
 
 
 class ApifyAuthError(CryptoSkillError):
-    """Missing or invalid APIFY_TOKEN (401/403)."""
+    """Missing or invalid APIFY_API_TOKEN (401/403)."""
 
 
 class ApifyActorError(CryptoSkillError):

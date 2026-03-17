@@ -19,9 +19,9 @@ RATE_LIMIT_ERROR_CODE = 429
 
 async def run_actor_sync(actor_id: str, run_input: dict) -> list[dict]:
     """Run an Apify actor synchronously and return dataset items."""
-    token = os.environ.get("APIFY_TOKEN")
+    token = os.environ.get("APIFY_API_TOKEN")
     if not token:
-        raise ApifyAuthError("APIFY_TOKEN environment variable is not set")
+        raise ApifyAuthError("APIFY_API_TOKEN environment variable is not set")
 
     url = f"{APIFY_BASE_URL}/acts/{actor_id}/run-sync-get-dataset-items"
     headers = {"Authorization": f"Bearer {token}"}
