@@ -4,6 +4,26 @@ Crypto data skills for AI agents — async Python functions wrapping Apify actor
 
 ## Installation
 
+### As a Claude Code Skill
+
+Copy the `crypto-skill/` folder to your skills directory:
+
+```bash
+# Personal (all projects)
+cp -r crypto-skill/ ~/.claude/skills/crypto-skill/
+
+# Project-specific
+cp -r crypto-skill/ .claude/skills/crypto-skill/
+```
+
+Then install the Python package:
+
+```bash
+bash ~/.claude/skills/crypto-skill/scripts/install.sh
+```
+
+### As a Python Package
+
 ```bash
 pip install -e .
 ```
@@ -74,7 +94,7 @@ asyncio.run(main())
 
 **RealtimePrice** — `symbol`, `price`, `date`
 
-**MarketCoin** — `id`, `symbol`, `name`, `current_price`, `market_cap`, `market_cap_rank`, `total_volume`, `high_24h`, `low_24h`, `price_change_24h`, `price_change_percentage_24h`, `ath`, `atl`, `last_updated`, and more
+**MarketCoin** — `id`, `symbol`, `name`, `current_price`, `market_cap`, `market_cap_rank`, `total_volume`, `high_24h`, `low_24h`, `price_change_24h`, `price_change_percentage_24h`, `circulating_supply`, `total_supply`, `max_supply`, `ath`, `atl`, `last_updated`
 
 ### Exceptions
 
@@ -87,6 +107,25 @@ All exceptions inherit from `CryptoSkillError`:
 | `ApifyTimeoutError` | Actor run exceeded 300s timeout |
 | `ActorDataError` | Response doesn't match expected schema |
 
+## Project Structure
+
+```
+src/crypto_skill/          # Python package source
+  client.py                # Apify REST API client
+  kucoin.py                # KuCoin actor wrapper (3 functions)
+  coingecko.py             # CoinGecko actor wrapper (6 functions)
+  models.py                # Pydantic models (OHLCVCandle, RealtimePrice, MarketCoin)
+  constants.py             # Named constants (actor IDs, timeouts, scrape modes)
+  exceptions.py            # Typed exception hierarchy
+
+crypto-skill/              # Claude Code skill package
+  SKILL.md                 # Skill definition for Claude
+  scripts/                 # Bundled source + install script
+  references/              # API reference documentation
+
+tests/                     # 61 unit tests (pytest + respx)
+```
+
 ## Development
 
 ```bash
@@ -94,12 +133,9 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Run tests
-pytest tests/ -v
-
-# Lint
-ruff check src/ tests/
-ruff format src/ tests/
+pytest tests/ -v           # Run tests
+ruff check src/ tests/     # Lint
+ruff format src/ tests/    # Format
 ```
 
 ## Apify Actors
