@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 import httpx
 
@@ -19,7 +20,7 @@ from crypto_skill.exceptions import (
 )
 
 
-async def run_actor_sync(actor_id: str, run_input: dict) -> list[dict]:
+async def run_actor_sync(actor_id: str, run_input: dict[str, Any]) -> list[dict[str, Any]]:
     """Run an Apify actor synchronously and return dataset items."""
     token = os.environ.get("APIFY_API_TOKEN")
     if not token:

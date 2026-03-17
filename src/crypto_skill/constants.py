@@ -7,6 +7,7 @@ DEFAULT_VS_CURRENCY = "usd"
 DEFAULT_SORT_ORDER = "market_cap_desc"
 REALTIME_TIMEFRAME = "1m"
 REALTIME_DATA_LIMIT = 1
+DEFAULT_HISTORICAL_DAYS = 30
 
 # HTTP status codes for Apify API error mapping
 AUTH_ERROR_CODES = frozenset({401, 403})

@@ -6,6 +6,7 @@ from crypto_skill.client import run_actor_sync
 from crypto_skill.constants import (
     COINGECKO_ACTOR_ID,
     DEFAULT_DATA_LIMIT,
+    DEFAULT_HISTORICAL_DAYS,
     DEFAULT_SORT_ORDER,
     DEFAULT_VS_CURRENCY,
     SCRAPE_MODE_CATEGORIES,
@@ -39,7 +40,7 @@ async def get_market_data(
     max_results: int = DEFAULT_DATA_LIMIT,
 ) -> list[MarketCoin]:
     """Fetch market data for top cryptocurrencies from CoinGecko."""
-    actor_input: dict = {
+    actor_input: dict[str, object] = {
         "scrapeMode": SCRAPE_MODE_MARKET_DATA,
         "vsCurrency": vs_currency,
         "sortOrder": DEFAULT_SORT_ORDER,
@@ -63,7 +64,7 @@ async def get_coin_detail(coin_id: str, include_details: bool = True) -> MarketC
 
 
 async def get_historical(
-    coin_id: str, days: int = 30, vs_currency: str = DEFAULT_VS_CURRENCY
+    coin_id: str, days: int = DEFAULT_HISTORICAL_DAYS, vs_currency: str = DEFAULT_VS_CURRENCY
 ) -> MarketCoin:
     """Fetch data for a coin from CoinGecko (historical mode)."""
     actor_input = {

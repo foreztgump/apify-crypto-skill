@@ -12,7 +12,7 @@ strategic programming. See CODE_PRINCIPLES.md for full details.
 - Actor IDs: `moving_beacon-owner1/my-actor-14` (KuCoin), `benthepythondev/crypto-intelligence` (CoinGecko) — these are URL-encoded as `moving_beacon-owner1~my-actor-14` in API paths.
 - Apify sync run endpoint has a 300-second timeout — for long-running actor calls, use async run + polling instead.
 - All monetary/price values from actors are floats — do NOT convert to integers.
-- OHLCV timestamps from KuCoin are Unix milliseconds — convert to seconds when exposing to consumers.
+- KuCoin actor returns dates as strings (e.g. "2026-03-16 23:15:00"), not Unix timestamps.
 - `APIFY_API_TOKEN` must come from environment variable — never accept tokens as function parameters or hardcode them.
 - When stuck or confused for more than 2 attempts at the same problem, say so explicitly.
 - Always request local code review (`superpowers:code-reviewer`) before committing.
