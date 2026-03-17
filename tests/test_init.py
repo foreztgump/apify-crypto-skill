@@ -19,7 +19,7 @@ EXPECTED_EXPORTS = [
 
 
 def test_all_exports_present():
-    assert len(crypto_skill.__all__) == 14
+    assert len(crypto_skill.__all__) == len(EXPECTED_EXPORTS)
     for name in EXPECTED_EXPORTS:
         assert name in crypto_skill.__all__, f"{name} missing from __all__"
 

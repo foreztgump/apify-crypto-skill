@@ -42,8 +42,8 @@ class TestGetOhlcv:
         assert call_input["data_limit"] == DEFAULT_DATA_LIMIT
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_model_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_model_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.kucoin import get_ohlcv
 
         with pytest.raises(ActorDataError):
@@ -89,8 +89,8 @@ class TestGetRealtimePrice:
         assert call_input["data_limit"] == 1
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_candle_data_raises_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_candle_data_raises_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.kucoin import get_realtime_price
 
         with pytest.raises(ActorDataError, match="Failed to parse"):
@@ -126,8 +126,8 @@ class TestGetAllCoinsOhlcv:
         assert call_input["data_limit"] == DEFAULT_DATA_LIMIT
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.kucoin import get_all_coins_ohlcv
 
         with pytest.raises(ActorDataError):

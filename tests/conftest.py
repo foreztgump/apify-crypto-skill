@@ -45,3 +45,9 @@ def sample_market_response():
             "price_change_percentage_24h": 7.3,
         },
     ]
+
+
+@pytest.fixture()
+def bad_actor_response():
+    """Invalid actor response data for error-path tests."""
+    return [{"bad": "data"}]

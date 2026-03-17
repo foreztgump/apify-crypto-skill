@@ -4,17 +4,19 @@ import os
 
 import httpx
 
-from crypto_skill.constants import APIFY_BASE_URL, DEFAULT_TIMEOUT
+from crypto_skill.constants import (
+    APIFY_BASE_URL,
+    AUTH_ERROR_CODES,
+    DEFAULT_TIMEOUT,
+    RATE_LIMIT_ERROR_CODE,
+    TIMEOUT_ERROR_CODE,
+)
 from crypto_skill.exceptions import (
     ActorDataError,
     ApifyActorError,
     ApifyAuthError,
     ApifyTimeoutError,
 )
-
-AUTH_ERROR_CODES = frozenset({401, 403})
-TIMEOUT_ERROR_CODE = 408
-RATE_LIMIT_ERROR_CODE = 429
 
 
 async def run_actor_sync(actor_id: str, run_input: dict) -> list[dict]:

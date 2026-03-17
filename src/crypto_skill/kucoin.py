@@ -53,23 +53,12 @@ async def get_all_coins_ohlcv(timeframe: str, limit: int = DEFAULT_DATA_LIMIT) -
 
 
 def _parse_candles(items: list[dict], symbol: str) -> list[OHLCVCandle]:
-    """Validate and convert raw candle dicts to OHLCVCandle models.
+    """Validate raw candle dicts to OHLCVCandle models.
 
-    The actor returns capitalized keys (Date, Open, High, Low, Close, Volume)
-    and no symbol field. We map to lowercase and inject the symbol.
+    OHLCVCandle uses AliasGenerator to accept capitalized keys (Date, Open, etc.)
+    from the actor. Symbol is injected since the actor doesn't return it.
     """
     try:
-        return [
-            OHLCVCandle(
-                date=item["Date"],
-                open=item["Open"],
-                high=item["High"],
-                low=item["Low"],
-                close=item["Close"],
-                volume=item["Volume"],
-                symbol=symbol,
-            )
-            for item in items
-        ]
-    except (ValidationError, TypeError, KeyError) as exc:
+        return [OHLCVCandle(**item, symbol=symbol) for item in items]
+    except (ValidationError, TypeError) as exc:
         raise ActorDataError(f"Failed to parse OHLCV data: {exc}") from exc

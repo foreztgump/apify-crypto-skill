@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from crypto_skill.constants import COINGECKO_ACTOR_ID, DEFAULT_DATA_LIMIT
+from crypto_skill.constants import COINGECKO_ACTOR_ID, DEFAULT_DATA_LIMIT, DEFAULT_SORT_ORDER
 from crypto_skill.exceptions import ActorDataError
 from crypto_skill.models import MarketCoin
 
@@ -41,8 +41,8 @@ class TestGetSimplePrices:
         assert call_input["vsCurrencies"] == ["usd"]
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.coingecko import get_simple_prices
 
         with pytest.raises(ActorDataError):
@@ -71,7 +71,7 @@ class TestGetMarketData:
             {
                 "scrapeMode": "market_data",
                 "vsCurrency": "usd",
-                "sortOrder": "market_cap_desc",
+                "sortOrder": DEFAULT_SORT_ORDER,
                 "maxResults": DEFAULT_DATA_LIMIT,
             },
         )
@@ -86,8 +86,8 @@ class TestGetMarketData:
         assert call_input["category"] == "layer-1"
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.coingecko import get_market_data
 
         with pytest.raises(ActorDataError):
@@ -131,8 +131,8 @@ class TestGetCoinDetail:
             await get_coin_detail("bitcoin")
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.coingecko import get_coin_detail
 
         with pytest.raises(ActorDataError):
@@ -173,8 +173,8 @@ class TestGetHistorical:
         )
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.coingecko import get_historical
 
         with pytest.raises(ActorDataError):
@@ -192,8 +192,8 @@ class TestGetTrending:
         assert isinstance(result[0], MarketCoin)
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.coingecko import get_trending
 
         with pytest.raises(ActorDataError):
@@ -211,8 +211,8 @@ class TestGetCategories:
         assert isinstance(result[0], MarketCoin)
 
     @patch(MODULE_PATH, new_callable=AsyncMock)
-    async def test_invalid_data_raises_actor_data_error(self, mock_run):
-        mock_run.return_value = [{"bad": "data"}]
+    async def test_invalid_data_raises_actor_data_error(self, mock_run, bad_actor_response):
+        mock_run.return_value = bad_actor_response
         from crypto_skill.coingecko import get_categories
 
         with pytest.raises(ActorDataError):

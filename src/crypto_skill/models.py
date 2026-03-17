@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import AliasGenerator, BaseModel, ConfigDict
 
 # --- KuCoin Models ---
 
@@ -13,7 +13,11 @@ class OHLCVCandle(BaseModel):
     Symbol is injected from the request input since the actor doesn't return it.
     """
 
-    model_config = ConfigDict(extra="ignore")
+    model_config = ConfigDict(
+        extra="ignore",
+        alias_generator=AliasGenerator(validation_alias=str.capitalize),
+        populate_by_name=True,
+    )
 
     date: str
     open: float
