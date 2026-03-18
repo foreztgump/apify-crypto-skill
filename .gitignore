@@ -10,3 +10,11 @@ build/
 .ruff_cache/
 .pyright/
 .mypy_cache/
+
+# Internal development tooling
+CLAUDE.md
+CODE_PRINCIPLES.md
+.coderabbit.yaml
+.claude/
+docs/
+openspec/
